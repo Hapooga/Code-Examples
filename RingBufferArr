@@ -1,0 +1,75 @@
+template <typename T, int32_t SIZE>
+class RingBufferArr {
+
+private:
+	size_t index = 0;
+	T* objects = new T[SIZE];
+	bool was_Get = false;
+
+public:
+
+	void Put(T&& object) {
+		was_Get = false;
+		*(objects + (index++ % SIZE)) = std::move(object);
+		if (indext == SIZE) {
+			index = 0;
+		}
+	}
+
+	void Put(const T& object) {
+		was_Get = false;
+		*(objects + (index++ % SIZE)) = std::move(object);
+		if (index == SIZE) {
+			index = 0;
+		}
+	}
+
+	T Get() {
+		if (was_Get) {
+
+			index++;
+
+			if (index == SIZE) {
+
+				index = 0;
+
+			}
+		}
+		was_Get = true;
+		return move(*(objects + ((index)) % SIZE));
+	}
+
+	T* begin() {
+		return (objects);
+	}
+
+	T* end() {
+		return (objects + SIZE);
+	}
+
+	const T* begin() const {
+		return (objects);
+	}
+
+	const T* end() const {
+		return (objects + SIZE);
+	}
+
+	void ShiftRight() {
+		index--;
+		if (index < 0) {
+			index = SIZE - 1;
+		}
+	}
+
+	void ShiftLeft() {
+		index++;
+		if (index == SIZE) {
+			index = 0;
+		}
+	}
+
+	~RingBufferArr() {
+		delete[] objects;
+	}
+};
