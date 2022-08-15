@@ -1,0 +1,127 @@
+template <typename T>
+class RingBufferList {
+private:
+
+	struct Node {
+		Node* next = nullptr;
+		T object;
+		Node* prev = nullptr;
+	};
+
+private:
+
+	Node* node_first = nullptr;
+	Node* node_last = nullptr;
+	size_t size = 0;
+
+public:
+
+	void Insert(const T& obj) {
+		Node* tmp = new Node;
+		if (size == 0) {
+			node_first = node_last = tmp;
+			node_first->next = node_first->prev = node_first;
+		}
+		else if (size == 1) {
+			node_first = tmp;
+			node_first->next = node_last;
+			node_first->prev = node_last;
+			node_last->next = node_first;
+			node_last->prev = node_first;
+		}
+		else {
+			node_first->next = tmp;
+			tmp->prev = node_first;
+			tmp->next = node_last;
+			node_last->prev = tmp;
+			node_last = node_last->next;
+			node_first = tmp;
+		}
+		node_first->object = obj;
+		tmp = nullptr;
+		++size;
+	}
+
+	void Insert(T&& obj) {
+		Node* tmp = new Node;
+		if (size == 0) {
+			node_first = node_last = tmp;
+			node_first->next = node_first->prev = node_first;
+		}
+		else if (size == 1) {
+			node_first = tmp;
+			node_first->next = node_last;
+			node_first->prev = node_last;
+			node_last->next = node_first;
+			node_last->prev = node_first;
+		}
+		else {
+			node_first->next = tmp;
+			tmp->prev = node_first;
+			tmp->next = node_last;
+			node_last->prev = tmp;
+			node_last = node_last->next;
+			node_first = tmp;
+		}
+		node_first->object = move(obj);
+		tmp = nullptr;
+		++size;
+	}
+
+
+	T Get() {
+		return node_last->object;
+	}
+
+	void Pop() {
+		if (size == 1 ) {
+			delete node_first;
+			node_first = nullptr;
+			node_last = nullptr;
+			size--;
+		}
+		else if (size == 2) {
+			node_last->next = node_last;
+			node_last->prev = node_last;
+			delete node_first;
+			node_first = node_last;
+			size--;
+		}
+		else if (size > 2) {
+			node_first->next->prev = node_first->prev;
+			node_first->prev->next = node_first->next;
+			Node* tmp = node_first;
+			node_first = node_first->next;
+			delete tmp;
+			size--;
+		}
+	}
+
+
+	void ShiftRight() {
+		if (size > 1) {
+			node_first = node_first->prev;
+			node_last = node_last->prev;
+		}
+	}
+
+	void ShiftLeft() {
+		if (size > 1) {
+			node_first = node_first->next;
+			node_last = node_last->next;
+		}
+	}
+
+
+	~RingBufferList() {
+		Node* tmp = node_first;
+		while (node_first != node_last) {
+			node_first = node_first->next;
+			delete tmp;
+			tmp = node_first;
+		}
+		delete node_first;
+
+	}
+
+};
