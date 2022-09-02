@@ -1,0 +1,85 @@
+struct ListNode {
+
+	int val;
+	ListNode* next;
+
+	ListNode(int x) : val(x), next(NULL) {}
+
+};
+
+
+
+class Solution {
+
+public:
+
+	ListNode* reverseList1(ListNode* head) {
+
+		ListNode* buffer_pointer = nullptr;
+		ListNode* buffer_pointer_2 = nullptr;
+
+		if (head) {
+
+			if (head->next) {
+
+				buffer_pointer = head->next;
+				head->next = nullptr;
+
+				while (buffer_pointer->next) {
+
+					buffer_pointer_2 = buffer_pointer->next;
+					buffer_pointer->next = head;
+
+					head = buffer_pointer;
+					buffer_pointer = buffer_pointer_2;
+
+				}
+
+				buffer_pointer->next = head;
+				head = buffer_pointer;
+			}
+
+		}
+
+		return head;
+
+	}
+
+
+
+	ListNode* reverseList2(ListNode* head) {
+
+		ListNode* buffer_pointer = nullptr;
+		ListNode* buffer_pointer_2 = nullptr;
+		ListNode* end = nullptr;
+
+		if (head) {
+
+			if (head->next) {
+
+				buffer_pointer = head->next;
+				head->next = nullptr;
+
+				if (buffer_pointer->next) {
+
+					buffer_pointer_2 = buffer_pointer->next;
+
+					end = reverseList2(buffer_pointer);
+
+					buffer_pointer_2->next->next = head;
+
+					return end;
+				}
+
+				buffer_pointer->next = head;
+				head = buffer_pointer;
+
+			}
+
+		}
+
+		return head;
+	}
+
+
+};
